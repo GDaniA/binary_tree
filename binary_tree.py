@@ -1,7 +1,7 @@
 from node import Node
 
 class BinaryTree:
-    def _init_(self):
+    def __init__(self):
         self.root: Node | None = None
 
     def append(self, value: int, ref: Node | None, side: str | None):
@@ -18,10 +18,28 @@ class BinaryTree:
                 ref.right = new_node
 
         return new_node
-    def preorder(self) -> str:
-        return self._preorder(self.root)
 
-    def _preorder(self, ref: Node | None)-> str:
+    def inorder(self) -> str:
+        return f"({self.__inorder(self.root)})"
+
+    def __inorder(self, ref: Node | None) -> str:
+        if ref is None:
+            return 'NULL'
+        elif ref.is_leaf():
+            return str(ref)
+
+        left = self.__inorder(ref.left)
+        root = str(ref)
+        right = self.__inorder(ref.right)
+
+        return f"({left}({root}){right})"
+
+
+
+    def preorder(self) -> str:
+        return self.__preorder(self.root)
+
+    def __preorder(self, ref: Node | None)-> str:
         if ref is None:
             return 'NULL'
 
@@ -33,9 +51,9 @@ class BinaryTree:
         result = '('
         result += str(ref)
         result += '('
-        result += self._preorder(ref.right)
+        result += self.__preorder(ref.right)
         result += ','
-        result += self._preorder(ref.left)
+        result += self.__preorder(ref.left)
         result += ')'
 
         return result
@@ -59,22 +77,24 @@ class BinaryTree:
 
         return result
 
-    def inorder(self) -> str:
-        return f"({self._inorder(self.root)})"
-
-    def _inorder(self, ref: Node | None ) -> str:
+    def search(self, value : int) -> Node | None:
+        ref = self.__search(value, self.root)
         if ref is None:
-            return 'NULL'
+            raise Exception('EL valor no existe')
 
-        if ref.is_leaf():
-            return str(ref)
+        return ref
 
-        result = self._inorder(ref.left)
-        result += '('
-        result += str(ref)
-        result += '('
-        result += self._inorder(ref.right)
-        result += ')'
-        result += ')'
+    def __search(self, value: int, ref: Node | None) -> Node | None:
+        if ref is None:
+            return None
 
-        return result
+        if ref.value == value:
+            return ref
+
+        left = self.__inorder(value, ref.left)
+
+        if left is None:
+            return left
+
+        right = self.__search(value, ref.right)
+        return right
